@@ -494,17 +494,9 @@ const SECTIONS=[
    {type:"surveyViz",title:"استبانة اهتمامات الطالبات ومهاراتهن"},
    {type:"form",id:"period",title:"التقرير الدوري الموجز",fields:[["range","الفترة المشمولة"],["wins","أبرز الإنجازات","textarea",1],["kpis","مؤشرات الأداء خلال الفترة","textarea",1],["obst","المعوّقات والمعالجات","textarea",1],["next","الخطوات القادمة","textarea",1],["rec","التوصيات للقيادة","textarea",1]]},
    {type:"linked"}
-  ]},
- {key:"notes",code:"ل",title:"إغلاق الملاحظات",num:"القسم السادس",
-  desc:"يوثّق هذا القسم استجابةَ المدرسة لملاحظات الزيارات الإشرافية والإدارية، ويُثبت معالجة كل ملاحظة بإجراء محدد وشاهد مرجعي داخل الملف. يعكس ذلك جدية المدرسة في التطوير، ويتيح للمشرفة التحقق من إغلاق الملاحظات في دقائق.",
-  blocks:[
-   {type:"table",id:"log",title:"سجل معالجة الملاحظات",tag:"ل",cols:[["note","الملاحظة"],["src","مصدرها وتاريخها"],["fix","إجراء المعالجة"],["ev","رمز الشاهد"],["closed","تاريخ الإغلاق"],["st","الحالة","notest"]],defaults:[],emptyText:"لا توجد ملاحظات مسجّلة. أضيفي أول ملاحظة وردت في زيارة أو تقرير."},
-   {type:"closing"},
-   {type:"checklist",id:"check",title:"قائمة التحقق قبل العرض على المشرفة",items:["البطاقة التعريفية مكتملة وتاريخ التحديث حديث","الخطة التشغيلية معتمدة وموقّعة من القائدة","قرار تشكيل اللجنة ومحضر اجتماع واحد على الأقل مرفقان","جدول الحصر محدّث ومطابق لبيانات المنصة","بطاقة برنامج نسمو مكتملة مع شواهدها","لكل برنامج منفّذ تقرير تنفيذ وشاهد واحد على الأقل","لقطات المنصة مرمّزة ومؤرّخة ومحجوبة البيانات الحساسة","لوحة المؤشرات معبأة بأحدث الأرقام","جميع الملاحظات السابقة مغلقة بشاهد","كل رمز شاهد مذكور في الجداول يقابله ملف فعلي"]},
-   {type:"linked"}
   ]}
 ];
-const EV_SECTIONS=SECTIONS.filter(s=>["plans","students","programs","evidence","reports","notes"].includes(s.key));
+const EV_SECTIONS=SECTIONS.filter(s=>["plans","students","programs","evidence","reports"].includes(s.key));
 const TPL={
  reg:{label:"تسجيل",text:"يوضّح الشاهد استكمال تسجيل {count} طالبة في {program} عبر {platform} بتاريخ {date}، تحقيقًا لهدف {goal}."},
  res:{label:"نتائج",text:"يبيّن الشاهد نتائج {program}، حيث حققت {count} طالبة المعيار المطلوب بنسبة {percent}% من المشاركات."},
@@ -636,11 +628,9 @@ function renderHome(){
   const o=overall(); const C=2*Math.PI*60;
   const students=tableRows("students",blk("students","list")).filter(r=>String(r.name||"").trim()).length;
   const progs=tableRows("programs",blk("programs","reg")).filter(r=>String(r.name||"").trim()).length;
-  const open=tableRows("notes",blk("notes","log")).filter(r=>String(r.note||"").trim()&&r.st!=="done").length;
-  const chk=Object.values(secData("notes").checks).filter(Boolean).length;
-  let h=renderPersona()+'<div class="sec-head"><div class="grow"><div class="sec-num">نظرة عامة</div><h2>لوحة إنجاز الملف</h2></div></div>';
+    let h=renderPersona()+'<div class="sec-head"><div class="grow"><div class="sec-num">نظرة عامة</div><h2>لوحة إنجاز الملف</h2></div></div>';
   h+='<section class="card"><div class="card-b hero"><svg class="ring" viewBox="0 0 150 150" role="img" aria-label="نسبة اكتمال الملف '+o+'%"><circle cx="75" cy="75" r="60" fill="none" stroke="var(--sunk)" stroke-width="12"/><circle cx="75" cy="75" r="60" fill="none" stroke="var(--gold)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(C*o/100)+' '+C+'" transform="rotate(-90 75 75)"/><text x="75" y="80" text-anchor="middle" font-size="32" font-weight="600" fill="var(--ink)">'+o+'%</text><text x="75" y="102" text-anchor="middle" font-size="12" fill="var(--ink-2)">اكتمال الملف</text></svg><div class="kpis">'+
-   kpi(students,"طالبة في الحصر")+kpi(progs,"برنامج ومبادرة")+kpi(S.evidence.length,"شاهد موثّق")+kpi(open,"ملاحظة مفتوحة",open>0)+kpi(chk+"/10","بنود التحقق")+'</div></div></section>';
+   kpi(students,"طالبة في الحصر")+kpi(progs,"برنامج ومبادرة")+kpi(S.evidence.length,"شاهد موثّق")+'</div></div></section>';
   const QL=quickLinks();
   if(QL.length) h+='<section class="card"><div class="card-h"><h3>المنصة الرقمية والمحاكي<span class="tag">روابط مباشرة</span></h3></div><div class="card-b ql">'+QL.map(q=>'<a class="ql-item ql-'+q.k+'" href="'+esc(q.u)+'" target="_blank" rel="noopener"><b>'+q.t+'</b><span>'+q.d+'</span><i>فتح ↗</i></a>').join("")+'</div></section>';
   h+='<section class="card"><div class="card-h"><h3>اكتمال الأقسام</h3><span class="nav-pct">اضغطي على أي قسم للانتقال إليه</span></div><div class="card-b secbars">'+
